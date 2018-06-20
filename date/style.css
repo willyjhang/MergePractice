@@ -1,0 +1,29 @@
+
+body{
+    
+    text-align: center;
+    background-color:gainsboro
+}
+td{
+    border-bottom: 1px solid black;
+}
+table{
+    width:60%;
+    margin:auto;
+    font-size: 1.5em;
+}
+
+li{
+    text-align: left;
+}
+h2{
+    background-color: gainsboro;
+    text-align: right;
+}
+h1{
+    color: crimson;
+
+}
+p{
+    font-size: 40px;
+}

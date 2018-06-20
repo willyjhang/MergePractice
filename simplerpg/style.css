@@ -1,0 +1,29 @@
+
+body{
+    
+    text-align: center;
+    background-color: antiquewhite;
+    
+}
+canvas{
+    border: 2px solid black;
+    background-image: url(images/grasses68.gif);
+}
+#talkBox{
+    height: :20px;
+    font-size: 26px;
+    color:brown;
+    font-weight: :bold;
+}
+
+li{
+    text-align: left;
+}
+h2{
+    background-color: aquamarine;
+    text-align: right;
+}
+h1{
+    text-align: center;
+    color: darkblue;
+}

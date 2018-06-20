@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+    
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="style.css"></script>
+    <script type="text/javascript">
+    
+
+		var accessToken = "75523809296c4c8ea7b1eb420ebaad22";
+		var baseUrl = "https://api.api.ai/v1/";
+
+		$(document).ready(function() {
+			$("#input").keypress(function(event) {
+				if (event.which == 13) {
+					event.preventDefault();
+                    setResponse("You:"+$("#input").val()+"\n");
+                
+					send();
+				}
+			});
+			$("#rec").click(function(event) {
+				switchRecognition();
+			});
+		});
+
+		var recognition;
+
+		function startRecognition() {
+			recognition = new webkitSpeechRecognition();
+			recognition.onstart = function(event) {
+				updateRec();
+			};
+			recognition.onresult = function(event) {
+				var text = "";
+			    for (var i = event.resultIndex; i < event.results.length; ++i) {
+			    	text += event.results[i][0].transcript;
+			    }
+			    setInput(text);
+				stopRecognition();
+			};
+			recognition.onend = function() {
+				stopRecognition();
+			};
+			recognition.lang = "en-US";
+			recognition.start();
+		}
+	
+		function stopRecognition() {
+			if (recognition) {
+				recognition.stop();
+				recognition = null;
+			}
+			updateRec();
+		}
+
+		function switchRecognition() {
+			if (recognition) {
+				stopRecognition();
+			} else {
+				startRecognition();
+			}
+		}
+
+		function setInput(text) {
+			$("#input").val(text);
+			send();
+		}
+
+		function updateRec() {
+			$("#rec").text(recognition ? "Stop" : "Speak");
+		}
+
+		function send() {
+			var text = $("#input").val();
+			$.ajax({
+				type: "POST",
+				url: baseUrl + "query?v=20150910",
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				headers: {
+					"Authorization": "Bearer " + accessToken
+				},
+				data: JSON.stringify({ query: text, lang: "en", sessionId: "somerandomthing" }),
+
+				success: function(data) {
+					//setResponse(JSON.stringify(data, undefined, 2));
+                    var result =JSON.stringify(data, undefined,2);
+                    var jsonData = JSON.parse(result);
+                    setResponse("bot:"+jsonData.result.fulfillment.speech+"\n");
+                    $("#input").val("");
+                    if(!jsonData.result.actionIncomplete)
+                    {
+                        getWeatherData(jsonData.result.parameters);
+                    }
+				},
+				error: function() {
+					setResponse("Internal Server Error");
+				}
+			});
+			//setResponse("Loading...");
+		}
+
+		function setResponse(val) {
+			//$("#response").text(val);
+            $("#response").prepend(val);
+		}
+        
+        function getWeatherData(queryInfo){
+        
+            var url="http://api.openweathermap.org/data/2.5/weather?";
+            var appid="0a5c0ac42e12b089f010d048ac0744af";
+            var data =$.getJSON(url,
+            {
+                q:queryInfo["geo-city"],
+                APPID:appid,
+                units:"metric"
+            }
+                                );
+            data.success(
+                
+                function(msg)
+                {
+                    setResponse("bot:the answer is "+msg.weather[0].description+" and the temperature is around       "+msg.main.temp+"&#8451;\n");
+                }
+            );
+            data.error(
+                function(msg)
+                {
+                    console.log("error");
+                }
+            );
+        }
+
+	</script>
+	<style type="text/css">
+		body { width: 500px; margin: 0 auto; text-align: center; margin-top: 20px; }
+		div {  position: ; }
+		input { width: 400px; }
+		button { width: 50px; }
+		textarea { width: 100%; }
+	</style>  
+
+     <title>willy chang</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="weatherbot/style.css">
+    <!-- Custom styles for this template -->
+    <link href="carousel.css" rel="stylesheet">
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Carousel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+            <a class="nav-link" href="index.html">Home<span class="sr-only">(current)</span></a>
+                
+            </li>
+              
+            <li class="nav-item active">
+            <a class="nav-link" href="randomselect.html">Mvp select <span class="sr-only">(current)</span></a>
+                
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="date.html">Games Date <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="rpg.html">RPG</a>
+            </li>
+            <li class="nav-item active">
+            <a class="nav-link" href="moviechat.html">Moviebot <span class="sr-only">(current)</span></a>
+                
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="JAMES.HTML">NBA forcast <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="youtube.html">James highlights  <span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
+          <form class="form-inline mt-2 mt-md-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </div>
+      </nav>
+    </header>
+
+    <main role="main">
+      <div class="container marketing">
+          
+          <h1>Weather bot</h1>
+          <div>
+		      <input id="input" type="text"> <button id="rec">Speak</button>
+		      <br>Response<br> <textarea id="response" cols="40" rows="20"></textarea>
+	      </div>
+         <hr class="featurette-divider">      
+        </div>
+
+
+      <!-- FOOTER -->
+      <footer class="container">
+        <p class="float-right"><a href="#">Back to top</a></p>
+        <p>&copy; 2017-2018 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+      </footer>
+    </main>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script src="assets/js/vendor/popper.min.js"></script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="assets/js/vendor/holder.min.js"></script>
+      
+      
+
+    </body>
+</html>
